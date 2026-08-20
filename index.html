@@ -379,11 +379,11 @@ if (prediction[i].className === "止まれ") {
     }
   if (navigator.geolocation) {
       // 速度・位置情報の更新を監視
-      navigator.geolocation.watchPosition(success, error, {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 5000
-      });
+　　navigator.geolocation.watchPosition(success, error, {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 1000
+});
     } else {
       alert("このブラウザはGPSに対応していません。");
     }
@@ -396,8 +396,10 @@ function success(position) {
         speedKmh = 0;
     }
 
+setInterval(() => {
     document.getElementById("speed").textContent =
         speedKmh.toFixed(1);
+}, 100);
 }
 
     function error(err) {
