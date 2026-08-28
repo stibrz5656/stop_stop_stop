@@ -222,6 +222,7 @@ let hasPlayed = false;
 let stopSignDetected = false;
 let stopCompleteUntil = 0;
 
+
 // 電子音（）
 function playBeep() {
     const now = audioCtx.currentTime;
@@ -252,6 +253,17 @@ function playBeep() {
 
 }
 
+function speakAlert(text) {
+    if (!window.speechSynthesis) return;
+
+    window.speechSynthesis.cancel();
+
+    const uttr = new SpeechSynthesisUtterance(text);
+    uttr.lang = "ja-JP";
+    uttr.rate = 1.25;
+
+    window.speechSynthesis.speak(uttr);
+}
     function requestAccess() {
     // 2つ目のボタンの要素を取得
     const nextBtn = document.getElementById("start-button");
@@ -360,7 +372,7 @@ if (prediction[i].className === "止まれ") {
 
 }  
  }
- if (isStopDetected) {
+if (isStopDetected) {
 
     stopSignDetected = true;
 
@@ -470,6 +482,8 @@ document.getElementById("val-total").textContent = total.toFixed(2);
 
     document.getElementById("stop-status").textContent = "一時停止完了";
     document.getElementById("stop-status").style.color = "green";
+
+    speakAlert("一時停止完了しました");
 
     // 3秒間表示を固定
     stopCompleteUntil = Date.now() + 1000;
