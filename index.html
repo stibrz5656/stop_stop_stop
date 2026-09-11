@@ -221,7 +221,7 @@ const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let hasPlayed = false;
 let stopSignDetected = false;
 let stopCompleteUntil = 0;
-
+let hasSpokenStop = false;
 
 // 電子音（）
 function playBeep() {
@@ -255,16 +255,10 @@ function playBeep() {
 
 function speakAlert(text) {
     if (!window.speechSynthesis) return;
-
-    window.speechSynthesis.cancel();
-
     const uttr = new SpeechSynthesisUtterance(text);
 uttr.lang = "ja-JP";
-uttr.rate = 0.8;      // ゆっくり
+uttr.rate = 1.0;      // ゆっくり
 uttr.volume = 1.0;    // 最大音量
-
-window.speechSynthesis.speak(uttr);
-
     window.speechSynthesis.speak(uttr);
 }
     function requestAccess() {
@@ -277,7 +271,7 @@ window.speechSynthesis.speak(uttr);
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
     // the link to your model provided by Teachable Machine export panel
-    const URL = "https://teachablemachine.withgoogle.com/models/xo9MmI2xz/";
+    const URL = "https://teachablemachine.withgoogle.com/models/MzV7Kgv_e/";
 
     let model, webcam, labelContainer, maxPredictions;
     let speedKmh = 0;
@@ -495,12 +489,18 @@ document.getElementById("val-total").textContent = total.toFixed(2);
 
         if (Date.now() - stopStartTime >= STOP_TIME) {
 
-           if (stopSignDetected) {
+           if (stopSignDetected && !hasSpokenStop) {
 
     document.getElementById("stop-status").textContent = "一時停止完了";
     document.getElementById("stop-status").style.color = "green";
 
     speakAlert("一時停止しました");
+
+    hasSpokenStop = true;
+
+    stopCompleteUntil = Date.now() + 1000;
+
+    stopSignDetected = false;
 
     // 3秒間表示を固定
     stopCompleteUntil = Date.now() + 1000;
