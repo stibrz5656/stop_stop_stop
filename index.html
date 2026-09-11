@@ -259,8 +259,11 @@ function speakAlert(text) {
     window.speechSynthesis.cancel();
 
     const uttr = new SpeechSynthesisUtterance(text);
-    uttr.lang = "ja-JP";
-    uttr.rate = 1.25;
+uttr.lang = "ja-JP";
+uttr.rate = 0.8;      // ゆっくり
+uttr.volume = 1.0;    // 最大音量
+
+window.speechSynthesis.speak(uttr);
 
     window.speechSynthesis.speak(uttr);
 }
