@@ -366,7 +366,7 @@ if (prediction[i].className === "止まれ") {
     document.getElementById("confidence").textContent =
         (probability * 100).toFixed(1) + "%";
 
-    if (probability > 0.9) {
+    if (probability > 0.85) {
         isStopDetected = true;
     }
 
@@ -432,8 +432,22 @@ setInterval(() => {
         DeviceMotionEvent.requestPermission()
           .then(permissionState => {
             if (permissionState === "granted") {
-              startSensor();
-            } else {
+
+    // iPhone Safari用：音声合成をユーザー操作で一度有効化
+    if (window.speechSynthesis) {
+        const testUtterance = new SpeechSynthesisUtterance("きどうしました。");
+        testUtterance.lang = "ja-JP";
+        testUtterance.volume = 0;
+        window.speechSynthesis.speak(testUtterance);
+    }
+
+    // AudioContextもiPhone用に再開
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+
+    startSensor();
+} else {
               alert("センサーの利用が拒否されました");
             }
           })
@@ -483,7 +497,7 @@ document.getElementById("val-total").textContent = total.toFixed(2);
     document.getElementById("stop-status").textContent = "一時停止完了";
     document.getElementById("stop-status").style.color = "green";
 
-    speakAlert("一時停止完了しました");
+    speakAlert("一時停止しました");
 
     // 3秒間表示を固定
     stopCompleteUntil = Date.now() + 1000;
