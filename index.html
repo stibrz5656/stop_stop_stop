@@ -276,9 +276,14 @@ uttr.volume = 1.0;    // 最大音量
     let model, webcam, labelContainer, maxPredictions;
     let speedKmh = 0;
     let stopStartTime = null;
-    const STOP_SPEED = 3.0;      // km/h
-    const STOP_ACCEL = 0.5;      // m/s²
-    const STOP_TIME = 0.8;      // 1秒
+　　const STOP_SPEED = 3.0;
+　　const STOP_ACCEL = 0.5;
+　　const STOP_TIME = 0.8;
+
+　　// 一時不停止判定用
+　　let stopDetectedTime = null;
+　　let hasSpokenNoStop = false;
+　　const NO_STOP_TIME = 3000; // 3秒以内に止まらなければ一時不停止
 
     // Load the image model and setup the webcam
    async function init() {
@@ -371,10 +376,18 @@ if (prediction[i].className === "止まれ") {
  }
 if (isStopDetected) {
 
+    // 一時停止標識を検知
     stopSignDetected = true;
+
+    // 検知した時刻を記録
+    if (stopDetectedTime === null) {
+        stopDetectedTime = Date.now();
+        hasSpokenNoStop = false;
+    }
 
     document.getElementById("warning-message").style.display = "block";
 
+    // 「一時停止してください」は1回だけ
     if (!hasPlayed) {
         playBeep();
         hasPlayed = true;
@@ -483,53 +496,79 @@ document.getElementById("val-total").textContent = total.toFixed(2);
 
     if (isStill) {
 
-        if (stopStartTime === null) {
-            stopStartTime = Date.now();
+    // 停止し始めた時刻を記録
+    if (stopStartTime === null) {
+        stopStartTime = Date.now();
+    }
+
+    // 0.8秒以上停止していた
+    if (Date.now() - stopStartTime >= STOP_TIME) {
+
+        if (stopSignDetected && !hasSpokenStop) {
+
+            // 一時停止完了
+            document.getElementById("stop-status").textContent = "一時停止完了";
+            document.getElementById("stop-status").style.color = "green";
+
+            speakAlert("一時停止しました");
+
+            hasSpokenStop = true;
+
+            // 次の一時停止検知に備えてリセット
+            stopSignDetected = false;
+            stopDetectedTime = null;
+            hasSpokenNoStop = false;
+
+            // 3秒間表示
+            stopCompleteUntil = Date.now() + 3000;
         }
 
-        if (Date.now() - stopStartTime >= STOP_TIME) {
+    } else {
 
-           if (stopSignDetected && !hasSpokenStop) {
-
-    document.getElementById("stop-status").textContent = "一時停止完了";
-    document.getElementById("stop-status").style.color = "green";
-
-    speakAlert("一時停止しました");
-
-    hasSpokenStop = true;
-
-    stopCompleteUntil = Date.now() + 1000;
-
-    stopSignDetected = false;
-
-    // 3秒間表示を固定
-    stopCompleteUntil = Date.now() + 1000;
-
-    stopSignDetected = false;
+        document.getElementById("stop-status").textContent = "停止";
+        document.getElementById("stop-status").style.color = "blue";
+    }
 
 } else {
 
-    document.getElementById("stop-status").textContent = "停止";
-    document.getElementById("stop-status").style.color = "blue";
-}
-            document.getElementById("stop-status").style.color = "green";
-        }
+    // 「止まれ」を検知したのに止まらなかった
+    if (
+        stopSignDetected &&
+        stopDetectedTime !== null &&
+        Date.now() - stopDetectedTime >= NO_STOP_TIME &&
+        !hasSpokenNoStop
+    ) {
 
-   } else {
+        // 一時不停止
+        document.getElementById("stop-status").textContent = "一時不停止";
+        document.getElementById("stop-status").style.color = "red";
 
-    // 少し動いた程度では停止を解除しない
+        speakAlert("一時停止していません");
+
+        hasSpokenNoStop = true;
+
+        // この標識についての判定を終了
+        stopSignDetected = false;
+        stopDetectedTime = null;
+
+        // 次の標識で再び判定できるようにする
+        hasPlayed = false;
+        hasSpokenStop = false;
+
+    }
+
+    // 通常の走行
     if (speedKmh > 4 || total > 0.6) {
 
         stopStartTime = null;
 
-        document.getElementById("stop-status").textContent = "走行中";
-        document.getElementById("stop-status").style.color = "red";
+        if (!hasSpokenNoStop) {
+            document.getElementById("stop-status").textContent = "走行中";
+            document.getElementById("stop-status").style.color = "red";
+        }
 
         hasSpokenStop = false;
-　　　　hasPlayed = false;
-
     }
-
 }
 }
  function showhelp(){
