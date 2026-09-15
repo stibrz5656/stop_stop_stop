@@ -378,12 +378,12 @@ if (isStopDetected) {
     if (!hasPlayed) {
         playBeep();
         hasPlayed = true;
+        speakAlert("一時停止してください");
     }
 
 } else {
 
     document.getElementById("warning-message").style.display = "none";
-    hasPlayed = false;
 }
     }
   if (navigator.geolocation) {
@@ -524,6 +524,9 @@ document.getElementById("val-total").textContent = total.toFixed(2);
 
         document.getElementById("stop-status").textContent = "走行中";
         document.getElementById("stop-status").style.color = "red";
+
+        hasSpokenStop = false;
+        hasPlayed = false;
 
     }
 
