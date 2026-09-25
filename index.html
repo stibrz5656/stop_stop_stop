@@ -21,21 +21,29 @@
  <button id="permission-btn"onclick="requestAccess()">センサーを許可</button>
  <button id="start-button"style="display: none;" onclick="init()">開始</button>
 </center>
+<div id="webcam-container"></div>
 <div id="status-box">
-    <div id="speed">--</div>
-    <div class="unit">km/h</div>
 
-    <span id="stop-status" class="highlight">判定中</span>
+    <div>
+        <span id="speed">--</span>
+        <span class="unit">km/h</span>
+    </div>
+
+    <div>
+        <span id="stop-status" class="highlight">判定中</span>
+    </div>
 
     <div class="data-box" id="data-area" style="display:none;">
-        <span class="label">今の揺れ</span>
+        <span class="label">揺れ</span>
         <span id="val-total" class="highlight">--</span>
-    </div><div class="data-box">
-    <span class="label">認識率</span>
-    <span id="confidence">--%</span>
+    </div>
+
+    <div class="data-box">
+        <span class="label">認識率</span>
+        <span id="confidence">--%</span>
+    </div>
+
 </div>
-</div>
-<div id="webcam-container"></div>
 <div id="label-container"></div>
 <div id="warning-message">🚨止まれ🚨</div>
 <div id="last-update">
@@ -129,28 +137,49 @@
     }
 }
 #status-box {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    max-width: 180px;
+    position: relative;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+
+    width: max-content;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    margin: 10px auto;
+    padding: 8px 12px;
+
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
 
     background: rgba(255,255,255,0.9);
     border: 2px solid #000;
     border-radius: 10px;
-    padding: 8px 12px;
 
     text-align: center;
+    white-space: nowrap !important;
     z-index: 999;
-    display: none;
 }
 
+#status-box > div,
+#status-box > span {
+    display: inline-block !important;
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+    margin: 0;
+}
+
+#status-box .data-box {
+    margin: 0 !important;
+}
 #status-box .speed {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
 }
 
 #status-box .unit {
-    font-size: 16px;
+    font-size: 12px;
 }
 
 #status-box #stop-status {
