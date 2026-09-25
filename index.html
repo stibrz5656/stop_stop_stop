@@ -24,24 +24,29 @@
 <div id="webcam-container"></div>
 <div id="status-box">
 
-    <div>
+    <!-- 左：速度 -->
+    <div class="speed-area">
         <span id="speed">--</span>
         <span class="unit">km/h</span>
     </div>
 
-    <div>
-        <span id="stop-status" class="highlight">判定中</span>
+    <!-- 右：揺れ・認識率を2段 -->
+    <div class="info-area">
+
+        <div class="data-box" id="data-area" style="display:none;">
+            <span class="label">揺れ</span>
+            <span id="val-total" class="highlight">--</span>
+        </div>
+
+        <div class="data-box">
+            <span class="label">認識率</span>
+            <span id="confidence">--%</span>
+        </div>
+
     </div>
 
-    <div class="data-box" id="data-area" style="display:none;">
-        <span class="label">揺れ</span>
-        <span id="val-total" class="highlight">--</span>
-    </div>
-
-    <div class="data-box">
-        <span class="label">認識率</span>
-        <span id="confidence">--%</span>
-    </div>
+    <!-- 下：停止状態 -->
+    <div id="stop-status" class="highlight">判定中</div>
 
 </div>
 <div id="label-container"></div>
@@ -138,67 +143,66 @@
 }
 #status-box {
     position: relative;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-
-    width: max-content;
-    max-width: 100%;
-    box-sizing: border-box;
-
+    display: none;
+    width: fit-content;
+    max-width: 95%;
     margin: 10px auto;
-    padding: 8px 12px;
-
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+    padding: 8px 15px;
 
     background: rgba(255,255,255,0.9);
     border: 2px solid #000;
     border-radius: 10px;
 
     text-align: center;
-    white-space: nowrap !important;
     z-index: 999;
 }
 
-#status-box > div,
-#status-box > span {
-    display: inline-block !important;
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-    margin: 0;
+/* 速度＋揺れ・認識率 */
+#status-box .speed-area {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin-right: 20px;
 }
 
-#status-box .data-box {
-    margin: 0 !important;
-}
-#status-box .speed {
-    font-size: 20px;
+#status-box #speed {
+    font-size: 30px;
     font-weight: bold;
 }
 
 #status-box .unit {
-    font-size: 12px;
+    font-size: 16px;
 }
 
-#status-box #stop-status {
-    display: block;
-    font-size: 18px;
-    margin-top: 5px;
-    font-weight: bold;
+/* 揺れ・認識率を縦2段 */
+#status-box .info-area {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: middle;
+    text-align: left;
 }
 
 #status-box .data-box {
-    margin-top: 5px;
     font-size: 14px;
+    white-space: nowrap;
+    margin: 0;
+    line-height: 1.4;
 }
 
 #status-box .label,
-#status-box #val-total {
+#status-box #val-total,
+#status-box #confidence {
     font-size: 14px;
 }
 
+/* 停止状態は一番下 */
+#status-box #stop-status {
+    display: block;
+    width: 100%;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 5px;
+}
 #warning-message {
       display: none; /* 最初は隠しておく（超重要） */
       font-size: 80px; /* 文字を巨大に */
