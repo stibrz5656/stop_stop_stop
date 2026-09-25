@@ -116,24 +116,23 @@
   #speed {font-size: 50px; font-weight: bold; color:rgb(0, 0, 0)}
   .unit  {font-size: 30px; }
   #stop-status,#higilight {font-size: 50px; font-weight: bold; color:rgb(0, 0, 0)}
-#webcam-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-}
-
-#webcam-container canvas,
-#webcam-container video {
-    display: block;
-    width: 500px;
-    max-width: 100%;
-    height: auto;
+/* スマホではステータスボックスをカメラ画像の下に配置 */
+@media screen and (max-width: 768px) {
+    #status-box {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: fit-content;
+        max-width: 90%;
+        margin: 10px auto;
+        z-index: 999;
+    }
 }
 #status-box {
     position: fixed;
-    top: 140px;
+    top: 10px;
     right: 10px;
+    max-width: 180px;
 
     background: rgba(255,255,255,0.9);
     border: 2px solid #000;
@@ -310,7 +309,7 @@ document.getElementById("status-box").style.display = "block";
 
         // Convenience function to setup a webcam
         const flip = false ; // whether to flip the webcam
-        webcam = new tmImage.Webcam(224, 224, false);// width, height, flip
+        webcam = new tmImage.Webcam(360, 360, false);// width, height, flip
         
 
         await webcam.setup({ facingMode: "environment" }); // request access to the webcam
@@ -519,8 +518,6 @@ document.getElementById("val-total").textContent = total.toFixed(2);
             stopDetectedTime = null;
             hasSpokenNoStop = false;
 
-            // 3秒間表示
-            stopCompleteUntil = Date.now() + 3000;
         }
 
     } else {
